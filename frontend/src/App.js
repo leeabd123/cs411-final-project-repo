@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Import Routes and Route
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'; // Import Routes and Route
 import Login from './login/login.js';
 import Register from './register/register.js';
 import { fetchWeatherByMonth } from './client.js';
+import UpdateUser from './updateUser/updateUser.js'; // Import the new component
 import './App.css';
 
 function App() {
@@ -43,28 +44,45 @@ function App() {
     }, [selectedType, weatherData, sortOrder]);
 
     return (
-        <div>
-            <form onSubmit={handleSubmit}>
-                <input type="text" value={month} onChange={handleMonthChange} placeholder="Enter month (e.g., 01 for January)" />
-                <button type="submit">Search</button>
-            </form>
-            <div>
-                <button onClick={() => setSelectedType('Tornado')}>Tornado</button>
-                <button onClick={() => setSelectedType('Blizzard')}>Blizzard</button>
-                <button onClick={() => setSelectedType('Hail')}>Hail</button>
-                <button onClick={() => setSelectedType('')}>Show All</button>
-            </div>
-            <div>
-                <button onClick={() => setSortOrder('Newest to Oldest')}>Newest to Oldest</button>
-                <button onClick={() => setSortOrder('Oldest to Newest')}>Oldest to Newest</button>
-            </div>
-            <div style={{ overflowY: 'scroll', height: '400px' }}>
-                {filteredData.map((event, index) => (
-                    <div key={index}>{/* Display weather event details here */}</div>
-                ))}
-            </div>
-        </div>
-    );
+      <Router>
+          <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/update-user" element={<UpdateUser />} /> {/* New Route for updating user */}
+              <Route path="/" element={
+                  <div>
+                      <div>
+                          {/* Navigation Links (Optional) */}
+                          <Link to="/login">Login</Link>
+                          <Link to="/register">Register</Link>
+                          <Link to="/update-user">Update User</Link>
+
+                      </div>
+                      <form onSubmit={handleSubmit}>
+                          <input type="text" value={month} onChange={handleMonthChange} placeholder="Enter month (e.g., 01 for January)" />
+                          <button type="submit">Search</button>
+                      </form>
+                      <div>
+                          <button onClick={() => setSelectedType('Tornado')}>Tornado</button>
+                          <button onClick={() => setSelectedType('Blizzard')}>Blizzard</button>
+                          <button onClick={() => setSelectedType('Hail')}>Hail</button>
+                          <button onClick={() => setSelectedType('')}>Show All</button>
+                      </div>
+                      <div>
+                          <button onClick={() => setSortOrder('Newest to Oldest')}>Newest to Oldest</button>
+                          <button onClick={() => setSortOrder('Oldest to Newest')}>Oldest to Newest</button>
+                      </div>
+                      <div style={{ overflowY: 'scroll', height: '400px' }}>
+                          {filteredData.map((event, index) => (
+                              <div key={index}>{/* Display weather event details here */}</div>
+                          ))}
+                      </div>
+                  </div>
+              } />
+          </Routes>
+      </Router>
+  );
+  
 }
 
 export default App;

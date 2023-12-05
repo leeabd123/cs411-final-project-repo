@@ -6,6 +6,9 @@ const userController = require('../models/user');
 
 //all work 
 
+router.post('/login', userController.loginUser);
+
+
 // Create a new user
 router.post('/', userController.createUser);
 

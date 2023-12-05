@@ -1,13 +1,50 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate for redirection
 
 const Register = () => {
-  // Implement your register form here
-  return (
-    <div>
-      <h2>Register</h2>
-      {/* Add your register form */}
-    </div>
-  );
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState(''); // State to handle error message
+    const navigate = useNavigate(); // Hook for navigation
+
+    const handleSubmit = async (event) => {
+        console.log(username);
+        event.preventDefault();
+        setError(''); // Reset error message
+
+        try {
+            console.log("username ", username)
+            const response = await fetch('http://localhost:3000/api/users', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ user_name: username, password }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Registration failed: ${response.status}`);
+            }
+
+            // Assuming successful registration, redirect to login page or home page
+            navigate('/login'); // Redirect to login page after successful registration
+        } catch (error) {
+            console.error('Registration error:', error);
+            setError('Registration failed. Please try again.'); // Set error message
+        }
+    };
+
+    return (
+        <div>
+            <h2>Register</h2>
+            {error && <div style={{color: 'red'}}>{error}</div>} {/* Display error message */}
+            <form onSubmit={handleSubmit}>
+                <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" />
+                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" />
+                <button type="submit">Register</button>
+            </form>
+        </div>
+    );
 };
 
 export default Register;
