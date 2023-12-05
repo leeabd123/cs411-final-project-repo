@@ -4,6 +4,8 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../models/user');
 
+//all work 
+
 // Create a new user
 router.post('/', userController.createUser);
 

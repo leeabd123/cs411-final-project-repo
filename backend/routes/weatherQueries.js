@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const weatherQueryController = require('../models/weatherQueries');
 
+//all work
+
 // Count of tornadoes with high death toll
 router.get('/death-toll-tornadoes', async (req, res, next) => {
   try {

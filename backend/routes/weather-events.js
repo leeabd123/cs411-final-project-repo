@@ -4,6 +4,7 @@ const db = require('../db'); // Ensure this is the promise-based pool
 
 // ...
 
+
 // Retrieve a single weather event by ID
 router.get('/:id', async (req, res) => {
   try {
@@ -61,18 +62,18 @@ router.get('/:id', async (req, res) => {
 // });
 
 // Delete a weather event by ID
-router.delete('/:id', async (req, res) => {
-  try {
-    const query = 'DELETE FROM WeatherEvent WHERE event_id = ?';
-    const [results] = await db.query(query, [req.params.id]);
-    if (results.affectedRows === 0) {
-      res.status(404).json({ error: 'Weather event not found' });
-    } else {
-      res.json({ message: 'Weather event deleted' });
-    }
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+// router.delete('/:id', async (req, res) => {
+//   try {
+//     const query = 'DELETE FROM WeatherEvent WHERE event_id = ?';
+//     const [results] = await db.query(query, [req.params.id]);
+//     if (results.affectedRows === 0) {
+//       res.status(404).json({ error: 'Weather event not found' });
+//     } else {
+//       res.json({ message: 'Weather event deleted' });
+//     }
+//   } catch (err) {
+//     res.status(500).json({ error: err.message });
+//   }
+// });
 
 module.exports = router;
