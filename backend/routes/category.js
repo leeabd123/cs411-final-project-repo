@@ -4,8 +4,11 @@ const express = require('express');
 const router = express.Router();
 const categoryController = require('../models/category');
 
-// Create a new category
-router.post('/', categoryController.createCategory);
+// // Create a new category
+// router.post('/', categoryController.createCategory);
+
+//all of these work vvv
+
 
 // Retrieve all categories
 router.get('/', categoryController.getAllCategories);

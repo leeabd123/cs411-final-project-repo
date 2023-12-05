@@ -48,7 +48,7 @@ const weatherEventRoutes = require('./routes/weather-events');
 app.use('/api/weather-events', weatherEventRoutes);
 
 const categoryRoutes = require('./routes/category');
-app.use('/api/categories', categoryRoutes);
+app.use('/api/category', categoryRoutes);
 
 
 const statisticsRoutes = require('./routes/statistics');
