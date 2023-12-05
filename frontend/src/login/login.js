@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for redirection
+import { useNavigate } from 'react-router-dom'; // Import useNavigate for 
+import './login.css'
+import { Link } from 'react-router-dom';
+
 
 const Login = () => {
     const [username, setUsername] = useState('');
@@ -32,13 +35,28 @@ const Login = () => {
     };
 
     return (
-        <div>
-            <h2>Login</h2>
-            {error && <div style={{color: 'red'}}>{error}</div>} {/* Display error message */}
-            <form onSubmit={handleSubmit}>
-                <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" />
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" />
-                <button type="submit">Login</button>
+        <div className="login-container">
+            <form className="login-form" onSubmit={handleSubmit}> {/* Added class */}
+                <h2 className="login-title">Login</h2> {/* Added class */}
+                {error && <div className="error-message">{error}</div>}
+                <div className="input-container"> {/* Added container for inputs */}
+                    <input
+                        type="text"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        placeholder="Username"
+                        className="username-input" // Added class
+                    />
+                    <input
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Password"
+                        className="password-input" // Added class
+                    />
+                </div>
+                <button type="submit" className="login-button">Login</button> {/* Added class */}
+                <Link to="/" className="return-home-button">Return Home</Link>
             </form>
         </div>
     );

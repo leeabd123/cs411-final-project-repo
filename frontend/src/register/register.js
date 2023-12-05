@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for redirection
-
+import { useNavigate, Link } from 'react-router-dom'; // Import useNavigate for redirection
+import '../login/login.css'
 const Register = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -35,13 +35,28 @@ const Register = () => {
     };
 
     return (
-        <div>
-            <h2>Register</h2>
-            {error && <div style={{color: 'red'}}>{error}</div>} {/* Display error message */}
-            <form onSubmit={handleSubmit}>
-                <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" />
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" />
-                <button type="submit">Register</button>
+        <div className="login-container"> {/* Use the same container for consistency */}
+            <form className="login-form" onSubmit={handleSubmit}>
+                <h2 className="login-title">Register</h2> {/* Use the same title class for consistency */}
+                {error && <div className="error-message">{error}</div>}
+                <div className="input-container">
+                    <input
+                        type="text"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        placeholder="Username"
+                        className="username-input"
+                    />
+                    <input
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Password"
+                        className="password-input"
+                    />
+                </div>
+                <button type="submit" className="login-button">Register</button> {/* Use the same button class for consistency */}
+                <Link to="/" className="return-home-button">Return Home</Link>
             </form>
         </div>
     );
