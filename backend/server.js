@@ -61,6 +61,11 @@ app.use('/api/additional', additionalRoutes);
 const weatherQueriesRoutes = require('./routes/weatherQueries');
 app.use('/api/weather', weatherQueriesRoutes);
 
+const weatherEventsByMonthRoutes = require('./routes/weathereventcontroller');
+app.use('/api/weather-events-by-month', weatherEventsByMonthRoutes);
+
+
+
 
 // Simple route for testing
 app.get('/', (req, res) => {
