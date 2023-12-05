@@ -3,6 +3,8 @@ const mysql = require('mysql2');
 
 // Initialize express app
 const app = express();
+const cors = require('cors'); // Import the cors package
+
 
 // Use environment variable for port or default to 3000
 const port = process.env.PORT || 3000;
@@ -31,6 +33,7 @@ function checkDatabaseConnection(req, res, next) {
     next();
   });
 }
+app.use(cors());
 
 // Use the database connection check middleware
 app.use(checkDatabaseConnection);

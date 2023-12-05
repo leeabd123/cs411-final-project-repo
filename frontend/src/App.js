@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { fetchWeatherByMonth } from './client';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Import Routes and Route
 import Login from './login/login.js';
-import Register from './register/register.js'
-import './App.css'
+import Register from './register/register.js';
+import { fetchWeatherByMonth } from './client.js';
+import './App.css';
 
 function App() {
     const [month, setMonth] = useState('');
@@ -13,12 +13,17 @@ function App() {
     const [sortOrder, setSortOrder] = useState('Newest to Oldest');
 
     const handleMonthChange = (event) => {
+      console.log("enterd");
         setMonth(event.target.value);
     };
 
     const handleSubmit = async (event) => {
+      console.log("enterd");
+
         event.preventDefault();
         const data = await fetchWeatherByMonth(month);
+        console.log("exit");
+
         setWeatherData(data);
         setFilteredData(data); // Reset filtered data
     };
@@ -58,17 +63,6 @@ function App() {
                     <div key={index}>{/* Display weather event details here */}</div>
                 ))}
             </div>
-            <Router>
-      <div>
-        {/* Your other components and routes */}
-        <Routes>
-          {/* <Route path="/" element={<App />} /> */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-        </Routes>
-      </div>
-    </Router>
-                  
         </div>
     );
 }

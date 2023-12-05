@@ -3,15 +3,17 @@ import React, { useState } from 'react';
 // Assuming fetchWeatherByMonth is imported from another file or defined here
 
 async function fetchWeatherByMonth(month) {
+    console.log("entered fetch");
     try {
-        // Replace 'baseURL' with the actual base URL of your server
-        const response = await fetch(`http://localhost:3000/bymonth/${month}`);
+        // Use HTTP instead of HTTPS for local development
+        const response = await fetch(`http://localhost:3000/api/weather-events-by-month/${month}`);
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
+        console.log(data);
         return data;
     } catch (error) {
         console.error('Fetch error:', error);
@@ -29,7 +31,9 @@ function Client() {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        console.log('Fetching data for month:', month); // Add a console log here
         const data = await fetchWeatherByMonth(month);
+        console.log('Fetched data:', data); // Add a console log here
         setWeatherData(data);
     };
 
@@ -57,5 +61,5 @@ function Client() {
     );
 }
 
-export {fetchWeatherByMonth};
+export { fetchWeatherByMonth };
 export default Client;
