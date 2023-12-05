@@ -35,6 +35,33 @@ function checkDatabaseConnection(req, res, next) {
 // Use the database connection check middleware
 app.use(checkDatabaseConnection);
 
+// In your server.js or app.js
+
+app.use(express.json());
+
+
+const userRoutes = require('./routes/user');
+app.use('/api/users', userRoutes);
+
+
+const weatherEventRoutes = require('./routes/weather-events');
+app.use('/api/weather-events', weatherEventRoutes);
+
+const categoryRoutes = require('./routes/category');
+app.use('/api/categories', categoryRoutes);
+
+
+const statisticsRoutes = require('./routes/statistics');
+const additionalRoutes = require('./routes/additional');
+
+app.use('/api/statistics', statisticsRoutes);
+app.use('/api/additional', additionalRoutes);
+
+
+const weatherQueriesRoutes = require('./routes/weatherQueries');
+app.use('/api/weather', weatherQueriesRoutes);
+
+
 // Simple route for testing
 app.get('/', (req, res) => {
   res.send('Hello World!');
@@ -44,3 +71,4 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);
 });
+
