@@ -1,63 +1,76 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import './App.css';
+import React, { useState, useEffect } from 'react';
+import { fetchWeatherByMonth } from './client';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Login from './login/login.js';
+import Register from './register/register.js'
+import './App.css'
 
+function App() {
+    const [month, setMonth] = useState('');
+    const [selectedType, setSelectedType] = useState('');
+    const [weatherData, setWeatherData] = useState([]);
+    const [filteredData, setFilteredData] = useState([]);
+    const [sortOrder, setSortOrder] = useState('Newest to Oldest');
 
-const App = () => {
-  const [state, setState] = useState('');
-  const [events, setEvents] = useState([]);
-  const [selectedEvent, setSelectedEvent] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+    const handleMonthChange = (event) => {
+        setMonth(event.target.value);
+    };
 
-  const handleOpenModal = (event) => {
-    setSelectedEvent(event);
-    setIsModalOpen(true);
-  };
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        const data = await fetchWeatherByMonth(month);
+        setWeatherData(data);
+        setFilteredData(data); // Reset filtered data
+    };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
+    useEffect(() => {
+        // Apply type filter on the fetched month data
+        let filtered = selectedType ? weatherData.filter(event => event.type === selectedType) : weatherData;
 
-  const handleSearch = async () => {
-    try {
-      // Replace this URL with the endpoint of backend server
-      //const response = await axios.get('url`);
-      // setEvents(response.data);
-    } catch (error) {
-      console.error('Error fetching weather events:', error);
-    }
-  };
+        // Sorting logic
+        filtered.sort((a, b) => {
+            let dateA = new Date(a.date); // Assuming 'date' is the attribute for event date
+            let dateB = new Date(b.date);
+            return sortOrder === 'Newest to Oldest' ? dateB - dateA : dateA - dateB;
+        });
 
-  return (
-    <div className="App">
-      <h1>NOAA Storm Events Database</h1>
-      <div className="search-box">
-        <input
-          type="text"
-          placeholder="Enter a state..."
-          value={state}
-          onChange={(e) => setState(e.target.value)}
-        />
-        <button onClick={handleSearch}>Search</button>
+        setFilteredData(filtered);
+    }, [selectedType, weatherData, sortOrder]);
+
+    return (
+        <div>
+            <form onSubmit={handleSubmit}>
+                <input type="text" value={month} onChange={handleMonthChange} placeholder="Enter month (e.g., 01 for January)" />
+                <button type="submit">Search</button>
+            </form>
+            <div>
+                <button onClick={() => setSelectedType('Tornado')}>Tornado</button>
+                <button onClick={() => setSelectedType('Blizzard')}>Blizzard</button>
+                <button onClick={() => setSelectedType('Hail')}>Hail</button>
+                <button onClick={() => setSelectedType('')}>Show All</button>
+            </div>
+            <div>
+                <button onClick={() => setSortOrder('Newest to Oldest')}>Newest to Oldest</button>
+                <button onClick={() => setSortOrder('Oldest to Newest')}>Oldest to Newest</button>
+            </div>
+            <div style={{ overflowY: 'scroll', height: '400px' }}>
+                {filteredData.map((event, index) => (
+                    <div key={index}>{/* Display weather event details here */}</div>
+                ))}
+            </div>
+            <Router>
+      <div>
+        {/* Your other components and routes */}
+        <Routes>
+          {/* <Route path="/" element={<App />} /> */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Routes>
       </div>
-      <div className="events-list">
-        {events.map((event, index) => (
-          <div key={index} className="event-item" onClick={() => handleOpenModal(event)}>
-            {event.title}
-          </div>
-        ))}
-      </div>
-      {isModalOpen && selectedEvent && (
-        <div className="modal">
-          <div className="modal-content">
-            <span className="close" onClick={handleCloseModal}>&times;</span>
-            <h2>{selectedEvent.title}</h2>
-            <p>{selectedEvent.description}</p>
-          </div>
+    </Router>
+                  
         </div>
-      )}
-    </div>
-  );
-};
+    );
+}
 
 export default App;
