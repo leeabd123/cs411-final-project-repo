@@ -1,8 +1,4 @@
-
-
-DELIMITER //
-
-DELIMITER //
+DELIMITER
 
 CREATE PROCEDURE GetWeatherEventsByCategoryAndTemperatureAndWindSpeed(
     IN category_param VARCHAR(255),
@@ -99,6 +95,5 @@ BEGIN
     DROP TEMPORARY TABLE IF EXISTS temp_results;
 END;
 
-//
 
 DELIMITER ;
