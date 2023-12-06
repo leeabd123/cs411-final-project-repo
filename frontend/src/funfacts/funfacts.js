@@ -23,8 +23,26 @@ const FunFacts = () => {
         }
     };
 
+    
+    const fd = async (endpoint, type) => {
+        try {
+            const response = await fetch(`http://localhost:3000/api/statistics/total-deaths-by-category`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const result = await response.json();
+            console.log("worked ", result);
+            setData(result);
+            setDataType(type);
+        } catch (error) {
+            console.error('Failed to fetch data:', error);
+            setData(null);
+            setDataType('');
+        }
+    };
+
     const handleDeathsByCategoryClick = () => {
-        fetchData('total-deaths-by-category', 'deathsByCategory');
+        fd('total-deaths-by-category', 'deathsByCategory');
     };
 
     const handleTornadoStatsClick = async () => {
