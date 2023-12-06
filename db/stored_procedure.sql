@@ -1,104 +1,71 @@
-
-
-DELIMITER //
-
-DELIMITER //
-
-CREATE PROCEDURE GetWeatherEventsByCategoryAndTemperatureAndWindSpeed(
-    IN category_param VARCHAR(255),
-    IN temperature_choice DECIMAL(10, 2),
-    IN wind_speed_choice INT
+-- Active: 1701897268072@@34.41.207.129@3306@cs411
+CREATE PROCEDURE `weather_status`(
+  IN p_category_name VARCHAR(255),
+  IN p_attribute VARCHAR(255),
+  IN p_order_direction VARCHAR(4)
 )
 BEGIN
-    DECLARE finished INT DEFAULT 0;
-    DECLARE event_id INT;
-    DECLARE event_type VARCHAR(255);
-    DECLARE temperature DECIMAL(10, 2);
-    DECLARE wind_speed INT;
+  DECLARE done INT DEFAULT FALSE;
+  DECLARE stat_value DECIMAL;
+  DECLARE median_value DECIMAL;
+  DECLARE mode_value DECIMAL;
+  DECLARE stat_cursor CURSOR FOR
+    SELECT
+      CASE
+        WHEN p_attribute = 'deaths' THEN deathsDirect + deathsIndirect
+        WHEN p_attribute = 'injuries' THEN injuriesDirect + injuriesIndirect
+        WHEN p_attribute = 'property_damage' THEN IFNULL(CAST(damageProperty AS DECIMAL), 0)
+        WHEN p_attribute = 'crop_damage' THEN IFNULL(CAST(damageCrops AS DECIMAL), 0)
+        ELSE 0
+      END AS value_stat
+    FROM WeatherEvent we
+    INNER JOIN Category c ON we.category_id = c.Category_id
+    WHERE c.category_name = p_category_name;
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+  CREATE TEMPORARY TABLE tempStats (
+    Value DECIMAL
+  );
 
-    CREATE TEMPORARY TABLE temp_results (
-        event_id INT,
-        event_type VARCHAR(255),
-        event_average_temperature DECIMAL(10, 2),
-        event_wind_speed INT
-    );
+  OPEN stat_cursor;
+  stat_loop: LOOP
+    FETCH stat_cursor INTO stat_value;
+    IF done THEN
+      LEAVE stat_loop;
+    END IF;
+    INSERT INTO tempStats (Value) VALUES (stat_value);
+  END LOOP;
+  CLOSE stat_cursor;
 
-    DECLARE tornado_cursor CURSOR FOR
-        SELECT e.event_id, e.event_type, AVG(t.temperature) AS average_temperature, MAX(t.wind_speed) AS max_wind_speed
-        FROM WeatherEvent e
-        JOIN Tornado t ON e.event_id = t.event_id
-        WHERE e.category_id = (SELECT category_id FROM Category WHERE category_name = category_param)
-        GROUP BY e.event_id, e.event_type;
+  -- Calculate Median
+  SET @rowindex := -1;
+  SELECT
+    AVG(d.value)
+  INTO median_value
+  FROM (
+    SELECT @rowindex:=@rowindex + 1 AS 'rowindex', tempStats.value AS 'value'
+    FROM tempStats
+    ORDER BY tempStats.value
+  ) AS d
+  WHERE 
+    d.rowindex IN (FLOOR(@rowindex / 2), CEIL(@rowindex / 2));
 
-    DECLARE blizzard_cursor CURSOR FOR
-        SELECT e.event_id, e.event_type, AVG(b.temperature) AS average_temperature, MAX(b.wind_speed) AS max_wind_speed
-        FROM WeatherEvent e
-        JOIN Blizzard b ON e.event_id = b.event_id
-        WHERE e.category_id = (SELECT category_id FROM Category WHERE category_name = category_param)
-        GROUP BY e.event_id, e.event_type;
+  -- Calculate Mode
+  SELECT Value INTO mode_value FROM (
+    SELECT Value, COUNT(*) AS freq
+    FROM tempStats
+    GROUP BY Value
+    ORDER BY freq DESC, Value DESC
+    LIMIT 1
+  ) AS subquery;
 
-    DECLARE hail_cursor CURSOR FOR
-        SELECT e.event_id, e.event_type, AVG(h.temperature) AS average_temperature, MAX(h.fall_speed) AS max_fall_speed
-        FROM WeatherEvent e
-        JOIN Hail h ON e.event_id = h.event_id
-        WHERE e.category_id = (SELECT category_id FROM Category WHERE category_name = category_param)
-        GROUP BY e.event_id, e.event_type;
+  -- Return Results
+  SELECT 'Average' AS Statistic, AVG(Value) AS Value FROM tempStats;
+  SELECT 'Mean' AS Statistic, AVG(Value) AS Value FROM tempStats;
+  SELECT 'Median' AS Statistic, median_value AS Value;
+  SELECT 'Mode' AS Statistic, mode_value AS Value;
 
-    DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished = 1;
+  -- Optional: To view all the values in tempStats
+  -- SELECT * FROM tempStats ORDER BY Value;
 
-    OPEN tornado_cursor;
-
-    tornado_loop: LOOP
-        FETCH tornado_cursor INTO event_id, event_type, temperature, wind_speed;
-
-        IF finished = 1 THEN
-            LEAVE tornado_loop;
-        END IF;
-
-        IF temperature > temperature_choice AND wind_speed > wind_speed_choice THEN
-            INSERT INTO temp_results VALUES (event_id, event_type, temperature, wind_speed);
-        END IF;
-    END LOOP;
-
-    CLOSE tornado_cursor;
-
-    OPEN blizzard_cursor;
-
-    blizzard_loop: LOOP
-        FETCH blizzard_cursor INTO event_id, event_type, temperature, wind_speed;
-
-        IF finished = 1 THEN
-            LEAVE blizzard_loop;
-        END IF;
-
-        IF temperature > temperature_choice AND wind_speed > wind_speed_choice THEN
-            INSERT INTO temp_results VALUES (event_id, event_type, temperature, wind_speed);
-        END IF;
-    END LOOP;
-
-    CLOSE blizzard_cursor;
-
-    OPEN hail_cursor;
-
-    hail_loop: LOOP
-        FETCH hail_cursor INTO event_id, event_type, temperature, wind_speed;
-
-        IF finished = 1 THEN
-            LEAVE hail_loop;
-        END IF;
-
-        IF temperature > temperature_choice AND wind_speed > wind_speed_choice THEN
-            INSERT INTO temp_results VALUES (event_id, event_type, temperature, wind_speed);
-        END IF;
-    END LOOP;
-
-    CLOSE hail_cursor;
-
-    SELECT * FROM temp_results;
-
-    DROP TEMPORARY TABLE IF EXISTS temp_results;
+  DROP TEMPORARY TABLE IF EXISTS tempStats;
 END;
-
-//
-
-DELIMITER ;

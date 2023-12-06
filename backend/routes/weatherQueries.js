@@ -129,6 +129,7 @@ router.get('/tornado/:eventId', async (req, res, next) => {
   }
 });
 
+<<<<<<< HEAD
 // Endpoint to fetch category details based on event ID
 router.get('/category/:eventId', async (req, res, next) => {
   try {
@@ -158,6 +159,8 @@ router.get('/category/:eventId', async (req, res, next) => {
   }
 });
 
+=======
+>>>>>>> bf64b7efdf9f4584256a94808706c4c49524ca74
 router.get('/weather-events-with-category', (req, res) => {
   const query = `
       SELECT WeatherEvent.*, Category.category_name
@@ -174,6 +177,9 @@ router.get('/weather-events-with-category', (req, res) => {
   });
 });
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> bf64b7efdf9f4584256a94808706c4c49524ca74
 
 module.exports = router;
