@@ -20,6 +20,8 @@ function App() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [comparedEvent, setComparedEvent] = useState(null);
+    const [weatherEvents, setWeatherEvents] = useState([]);
+    const [modalContent, setModalContent] = useState('');
 
     const handleMonthChange = (event) => {
       console.log("enterd");
@@ -30,6 +32,23 @@ function App() {
         setComparedEvent(event);
     };
 
+    useEffect(() => {
+        // Fetch weather events with category names
+        const fetchWeatherEvents = async () => {
+          try {
+            const response = await fetch('/api/weather-events-with-category');
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            setWeatherEvents(data);
+          } catch (error) {
+            console.error('Error fetching weather events', error);
+          }
+        };
+    
+        fetchWeatherEvents();
+      }, []);
 
     useEffect(() => {
         // This code will run when 'count' or 'name' changes.
@@ -37,7 +56,7 @@ function App() {
         console.log("selected type updated");
       }, [setSelectedType]); 
     
-
+    
     // Function to fetch event details
     const fetchEventDetails = async (eventId, selectedType) => {
         console.log("eventid and type ", selectedType, " ", eventId);
@@ -64,38 +83,36 @@ function App() {
             return data;
         } catch (error) {
             console.error('Failed to fetch event details:', error);
-            // Handle the error appropriately
         }
     };
         
     // Function to fetch category details based on event ID
-    const fetchCategoryDetails = async (eventId) => {
+    const fetchCategoryDetails = async (category_id) => {
         try {
-            const response = await fetch(`http://localhost:3000/api/weather/category/${eventId}`);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data = await response.json();
-            console.log("data ", data);
-            return data.category_name;
+          const response = await fetch(`http://localhost:3000/api/category/${category_id}`);
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          const data = await response.json();
+          console.log("data ", data);
+          return data.category_name;
         } catch (error) {
-            console.error('Failed to fetch category details:', error);
-            // Handle the error appropriately
+          console.error('Failed to fetch category details:', error);
         }
     };
 
     // Update the handleEventClick function
     const handleEventClick = async (event) => {
         const eventDetails = await fetchEventDetails(event.event_id, event.type);
-        const categoryName = await fetchCategoryDetails(event.event_id);
-        setSelectedEvent({...eventDetails, category_name: categoryName});
+        const categoryName = await fetchCategoryDetails(event.category_id); // Pass category_id
+        setSelectedEvent({ ...eventDetails, category_name: categoryName });
         setIsModalOpen(true);
-    };
+      };
 
   
 
     const handleSubmit = async (event) => {
-      console.log("enterd");
+      console.log("entered");
 
         event.preventDefault();
         const data = await fetchWeatherByMonth(month);
@@ -113,7 +130,7 @@ function App() {
         filtered.sort((a, b) => {
             let dateA = new Date(a.eventBeginTime); // Assuming 'date' is the attribute for event date
             let dateB = new Date(b.eventBeginTime);
-            return sortOrder === 'Newest to Oldest' ? dateB - dateA : dateA - dateB;
+            return sortOrder === 'Newest to Oldest' ? dateA - dateB : dateB - dateA;
         });
 
         setFilteredData(filtered);
@@ -126,7 +143,7 @@ function App() {
               <Route path="/register" element={<Register />} />
               <Route path="/update-user" element={<UpdateUser />} /> {/* New Route for updating user */}
               <Route path="/funfacts" element={<Funfacts />} /> {/* New Route for updating user */}
-
+                
               <Route path="/" element={
                   <div>
                       <div>
@@ -168,14 +185,14 @@ function App() {
                         <div>
                             <h2>Event Details</h2>
                             <div>Category Name: {selectedEvent?.category_name}</div>
-                            {/* <div>User ID: {selectedEvent?.user_id}</div> */}
+                            {/* <div>Category: {selectedEvent?.user_id}</div> */}
                             {/* Render other general details of selectedEvent */}
                             {/* Render specific details based on event type */}
                              </div>
                             {comparedEvent && (
                                 <div>
                                     <h2>Compared Event Details</h2>
-                                    <div>User ID: {comparedEvent?.user_id}</div>
+                                    <div>Category: {comparedEvent?.category_id}</div>
                                     {/* Render other details of comparedEvent */}
                                 </div>
                             )}

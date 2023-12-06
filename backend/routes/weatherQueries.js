@@ -130,5 +130,21 @@ router.get('/tornado/:eventId', async (req, res, next) => {
   }
 });
 
+router.get('/weather-events-with-category', (req, res) => {
+  const query = `
+      SELECT WeatherEvent.*, Category.category_name
+      FROM WeatherEvent
+      JOIN Category ON WeatherEvent.category_id = Category.Category_id;
+  `;
+
+  db.query(query, (err, results) => {
+      if (err) {
+          res.status(500).send('Server error');
+          throw err;
+      }
+      res.json(results);
+  });
+});
+
 
 module.exports = router;
