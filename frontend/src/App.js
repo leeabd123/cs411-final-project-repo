@@ -5,6 +5,7 @@ import Register from './register/register.js';
 import { fetchWeatherByMonth } from './client.js';
 import Modal from 'react-modal';
 import UpdateUser from './updateUser/updateUser.js'; // Import the new component
+import Funfacts from './funfacts/funfacts.js'
 import './App.css';
 
 Modal.setAppElement('#root');
@@ -29,11 +30,6 @@ function App() {
         setComparedEvent(event);
     };
 
-    const handleEventClick = async (event) => {
-        const eventDetails = await fetchEventDetails(event.event_id, event.type);
-        setSelectedEvent(eventDetails);
-        setIsModalOpen(true);
-    };
 
     useEffect(() => {
         // This code will run when 'count' or 'name' changes.
@@ -71,14 +67,32 @@ function App() {
             // Handle the error appropriately
         }
     };
-    
+        
+    // Function to fetch category details based on event ID
+    const fetchCategoryDetails = async (eventId) => {
+        try {
+            const response = await fetch(`http://localhost:3000/api/weather/category/${eventId}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            console.log("data ", data);
+            return data.category_name;
+        } catch (error) {
+            console.error('Failed to fetch category details:', error);
+            // Handle the error appropriately
+        }
+    };
 
-    // Function to handle event click
-    const handleDetialEventClick = async (event) => {
-        const eventDetails = await fetchEventDetails(event.event_id);
-        setSelectedEvent(eventDetails);
+    // Update the handleEventClick function
+    const handleEventClick = async (event) => {
+        const eventDetails = await fetchEventDetails(event.event_id, event.type);
+        const categoryName = await fetchCategoryDetails(event.event_id);
+        setSelectedEvent({...eventDetails, category_name: categoryName});
         setIsModalOpen(true);
     };
+
+  
 
     const handleSubmit = async (event) => {
       console.log("enterd");
@@ -111,6 +125,8 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/update-user" element={<UpdateUser />} /> {/* New Route for updating user */}
+              <Route path="/funfacts" element={<Funfacts />} /> {/* New Route for updating user */}
+
               <Route path="/" element={
                   <div>
                       <div>
@@ -118,6 +134,8 @@ function App() {
                           <Link to="/login">Login</Link>
                           <Link to="/register">Register</Link>
                           <Link to="/update-user">Update User</Link>
+                          <Link to="/funfacts">Funfacts</Link>
+
 
                       </div>
                       <form onSubmit={handleSubmit}>
@@ -150,7 +168,7 @@ function App() {
                         <div>
                             <h2>Event Details</h2>
                             <div>Category Name: {selectedEvent?.category_name}</div>
-                            <div>User ID: {selectedEvent?.user_id}</div>
+                            {/* <div>User ID: {selectedEvent?.user_id}</div> */}
                             {/* Render other general details of selectedEvent */}
                             {/* Render specific details based on event type */}
                              </div>
