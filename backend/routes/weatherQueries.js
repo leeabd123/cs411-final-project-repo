@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const weatherQueryController = require('../models/weatherQueries');
+const db = require('../db'); // Ensure this is the promise-based pool
 
 //all work
 
@@ -51,7 +52,6 @@ router.get('/hail/:eventId', async (req, res, next) => {
 
       // Execute the query with the provided eventId
       const [results] = await db.query(query, [req.params.eventId]);
-      console("results.length");
       if (results.length === 0) {
         res.status(404).json({ error: 'No weather events found for this month' });
       } else {
@@ -120,7 +120,6 @@ router.get('/tornado/:eventId', async (req, res, next) => {
 
       // Execute the query with the provided eventId
       const [results] = await db.query(query, [req.params.eventId]);
-      console("results.length");
       if (results.length === 0) {
         res.status(404).json({ error: 'No weather events found for this month' });
       } else {

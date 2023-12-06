@@ -4,7 +4,7 @@ const db = require('../db'); // Ensure this is the promise-based pool
 
 // ...
 
-
+//works
 // Retrieve a single weather event by ID
 router.get('/:id', async (req, res) => {
   try {
