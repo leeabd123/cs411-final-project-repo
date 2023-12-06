@@ -1,4 +1,4 @@
-DELIMITER //
+DELIMITER
 
 CREATE TRIGGER check_username
 BEFORE INSERT ON User
@@ -18,6 +18,6 @@ BEGIN
     INSERT INTO User (user_name, password)
     VALUES (NEW.user_name, NEW.password);
   END IF;
-END; //
+END;
 
 DELIMITER ;
