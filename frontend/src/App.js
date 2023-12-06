@@ -40,13 +40,13 @@ function App() {
         let url = '';
         switch (eventType) {
             case 'Tornado':
-                url = `http://localhost:3000/api/tornado/${eventId}`;
+                url = `http://localhost:3000/api/tornado/:${eventId}`;
                 break;
             case 'Blizzard':
-                url = `http://localhost:3000/api/blizzard/${eventId}`;
+                url = `http://localhost:3000/api/blizzard/:${eventId}`;
                 break;
             case 'Hail':
-                url = `http://localhost:3000/api/hail/${eventId}`;
+                url = `http://localhost:3000/api/hail/:${eventId}`;
                 break;
             // Add more cases as needed for different event types
         }
