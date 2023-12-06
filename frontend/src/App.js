@@ -35,18 +35,26 @@ function App() {
         setIsModalOpen(true);
     };
 
+    useEffect(() => {
+        // This code will run when 'count' or 'name' changes.
+    
+        console.log("selected type updated");
+      }, [setSelectedType]); 
+    
+
     // Function to fetch event details
-    const fetchEventDetails = async (eventId, eventType) => {
+    const fetchEventDetails = async (eventId, selectedType) => {
+        console.log("eventid and type ", selectedType, " ", eventId);
         let url = '';
-        switch (eventType) {
+        switch (selectedType) {
             case 'Tornado':
-                url = `http://localhost:3000/api/tornado/:${eventId}`;
+                url = `http://localhost:3000/api/weather/tornado/:${eventId}`;
                 break;
             case 'Blizzard':
-                url = `http://localhost:3000/api/blizzard/:${eventId}`;
+                url = `http://localhost:3000/api/weather/blizzard/:${eventId}`;
                 break;
             case 'Hail':
-                url = `http://localhost:3000/api/hail/:${eventId}`;
+                url = `http://localhost:3000/api/weather/hail/:${eventId}`;
                 break;
             // Add more cases as needed for different event types
         }
