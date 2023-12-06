@@ -1,6 +1,6 @@
-DELIMITER //
+DELIMITER
 
-CREATE PROCEDURE WeatherStats(
+CREATE PROCEDURE weather_status(
   IN p_category_name VARCHAR(255),
   IN p_attribute VARCHAR(255),
   IN p_order_direction VARCHAR(4)
@@ -8,11 +8,10 @@ CREATE PROCEDURE WeatherStats(
 BEGIN
   DECLARE done INT DEFAULT FALSE;
   DECLARE stat_value DECIMAL;
+  DECLARE median_value DECIMAL;
+  DECLARE mode_value DECIMAL;
   
-  CREATE TEMPORARY TABLE tempStats (
-    Value DECIMAL
-  );
-
+  -- Declare the cursor before creating the temporary table
   DECLARE stat_cursor CURSOR FOR
     SELECT
       CASE
@@ -28,6 +27,10 @@ BEGIN
 
   DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
 
+  CREATE TEMPORARY TABLE tempStats (
+    Value DECIMAL
+  );
+
   OPEN stat_cursor;
 
   stat_loop: LOOP
@@ -41,22 +44,24 @@ BEGIN
 
   CLOSE stat_cursor;
 
-  SELECT
-    'Average' AS Statistic, AVG(Value) AS Value
-  UNION
-  SELECT
-    'Mean' AS Statistic, AVG(Value) AS Value
-  UNION
-  SELECT
-    'Median' AS Statistic, PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY Value) AS Value
-  UNION
-  SELECT
-    'Mode' AS Statistic, MODE() WITHIN GROUP (ORDER BY Value) AS Value
-  FROM tempStats;
+  SELECT AVG(Value) INTO median_value FROM tempStats;
+
+  SELECT Value INTO mode_value FROM (
+    SELECT Value, COUNT(*) AS freq
+    FROM tempStats
+    GROUP BY Value
+    ORDER BY freq DESC
+    LIMIT 1
+  ) AS subquery;
+
+  SELECT 'Average' AS Statistic, AVG(Value) AS Value FROM tempStats;
+  SELECT 'Mean' AS Statistic, AVG(Value) AS Value FROM tempStats;
+  SELECT 'Median' AS Statistic, median_value AS Value;
+  SELECT 'Mode' AS Statistic, mode_value AS Value;
 
   SELECT * FROM tempStats ORDER BY Value;
 
   DROP TEMPORARY TABLE IF EXISTS tempStats;
-END //
+END;
 
 DELIMITER ;

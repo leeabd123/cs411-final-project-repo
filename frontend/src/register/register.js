@@ -30,7 +30,7 @@ const Register = () => {
             navigate('/login'); // Redirect to login page after successful registration
         } catch (error) {
             console.error('Registration error:', error);
-            setError('Registration failed. Please try again.'); // Set error message
+            setError('Username taken. Please choose another username.'); // Set error message
         }
     };
 
