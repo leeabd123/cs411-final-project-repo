@@ -9,7 +9,7 @@ const FunFacts = () => {
 
     const fetchData = async (endpoint, type) => {
         try {
-            const response = await fetch(`http://localhost:3000/api/statistics/${endpoint}`);
+            const response = await fetch(`http://localhost:3000/api/weather-events/weatherstats`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -27,8 +27,8 @@ const FunFacts = () => {
         fetchData('total-deaths-by-category', 'deathsByCategory');
     };
 
-    const handleWindSpeedClick = () => {
-        fetchData('average-wind-speed-severe-tornadoes', 'windSpeed');
+    const handleTornadoStatsClick = async () => {
+        fetchData('weatherStats', 'tornadoStats');
     };
 
     const renderData = () => {
@@ -46,11 +46,15 @@ const FunFacts = () => {
                     ))}
                 </div>
             );
-        } else if (dataType === 'windSpeed') {
+        } else if (dataType === 'tornadoStats') {
+            const averageWindSpeed = data[0][0].Value;
+            const averageTornadoSize = data[1][0].Value;
+
             return (
-                <div className="wind-speed-container">
-                    <h3>Average Wind Speed for Severe Tornadoes</h3>
-                    <p>{data[0].AverageWindSpeed} mph</p>
+                <div className="tornado-stats-container">
+                    <h3>Tornado Statistics</h3>
+                    <p>Average Wind Speed: {averageWindSpeed} mph</p>
+                    <p>Average Tornado Size: {averageTornadoSize}</p>
                 </div>
             );
         }
@@ -60,7 +64,7 @@ const FunFacts = () => {
         <div>
             <h2>Fun Facts</h2>
             <button onClick={handleDeathsByCategoryClick}>Total Deaths by Category</button>
-            <button onClick={handleWindSpeedClick}>Average Wind Speed for Severe Tornadoes</button>
+            <button onClick={handleTornadoStatsClick}>Tornado Statistics</button>
             <div className="data-display">
                 {renderData()}
             </div>

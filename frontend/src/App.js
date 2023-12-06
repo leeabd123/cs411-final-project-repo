@@ -6,6 +6,7 @@ import { fetchWeatherByMonth } from './client.js';
 import Modal from 'react-modal';
 import UpdateUser from './updateUser/updateUser.js'; // Import the new component
 import Funfacts from './funfacts/funfacts.js'
+import Favorites from './favorite/favorite.js'
 import './App.css';
 
 Modal.setAppElement('#root');
@@ -126,6 +127,8 @@ function App() {
               <Route path="/register" element={<Register />} />
               <Route path="/update-user" element={<UpdateUser />} /> {/* New Route for updating user */}
               <Route path="/funfacts" element={<Funfacts />} /> {/* New Route for updating user */}
+              <Route path="/Favorites" element={<Favorites />} /> {/* New Route for updating user */}
+
 
               <Route path="/" element={
                   <div>
@@ -135,6 +138,8 @@ function App() {
                           <Link to="/register">Register</Link>
                           <Link to="/update-user">Update User</Link>
                           <Link to="/funfacts">Funfacts</Link>
+                          <Link to="/favorites">Favorites</Link>
+
 
 
                       </div>

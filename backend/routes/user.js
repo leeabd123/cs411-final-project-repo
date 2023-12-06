@@ -24,6 +24,12 @@ router.put('/:id', userController.updateUserById);
 // Delete a user by ID
 router.delete('/:id', userController.deleteUserById);
 
+router.post('/:id/favorites', userController.addFavoriteEvent);
+
+router.get('/:id/favorites', userController.getFavoriteEventsByUserId);
+
+
+
 module.exports = router;
 
 

@@ -72,7 +72,45 @@ const userController = {
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
+  },
+  addFavoriteEvent: async (req, res) => {
+    const User_id = req.params.id;  // Get User_id from the route parameter
+    const { event_id } = req.body;  // Get event_id from the request body
+    console.log("eventid?? ", event_id);
+
+    const query = 'INSERT INTO UserFavoriteEvents (User_id, event_id) VALUES (?, ?)';
+
+    try {
+        await db.query(query, [User_id, event_id]);
+        res.status(201).json({ message: 'Favorite event added' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+},
+  getFavoriteEventsByUserId: async (req, res) => {
+    const user_id = req.params.id;
+    const query = `
+      SELECT W.*, C.category_name
+      FROM UserFavoriteEvents UFE
+      JOIN WeatherEvent W ON UFE.event_id = W.Event_id
+      JOIN Category C ON W.category_id = C.Category_id
+      WHERE UFE.User_id = ?;
+    `;
+  
+    try {
+      const [results] = await db.query(query, [user_id]);
+      if (results.length > 0) {
+        res.json(results);
+      } else {
+        res.status(404).json({ message: 'No favorite events found for this user' });
+      }
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
   }
+  
+
+
 };
 
 module.exports = userController;

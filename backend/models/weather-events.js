@@ -56,7 +56,15 @@ const weatherEventController = {
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
-  }
+  },
+  getWeatherStats: async (categoryName, attribute, orderDirection) => {
+    try {
+      const [results] = await db.query('CALL weather_status()', [categoryName, attribute, orderDirection]);
+      return results;
+    } catch (err) {
+      throw err;
+    }
+  },
 };
 
 module.exports = weatherEventController;

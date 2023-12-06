@@ -85,7 +85,6 @@ router.get('/blizzard/:eventId', async (req, res, next) => {
 
       // Execute the query with the provided eventId
       const [results] = await db.query(query, [req.params.eventId]);
-      console("results.length");
       if (results.length === 0) {
         res.status(404).json({ error: 'No weather events found for this month' });
       } else {
@@ -129,6 +128,52 @@ router.get('/tornado/:eventId', async (req, res, next) => {
       next(error);
   }
 });
+
+// Endpoint to fetch category details based on event ID
+router.get('/category/:eventId', async (req, res, next) => {
+  try {
+      // SQL query to join WeatherEvent and Category tables
+      const query = `
+          SELECT 
+              WeatherEvent.event_ id,
+              Category.category_id, 
+              Category.category_name
+          FROM 
+              WeatherEvent 
+          JOIN 
+              Category ON WeatherEvent.category_id = Category.category_id 
+          WHERE 
+              WeatherEvent.event_id = ?;
+      `;
+
+      // Execute the query with the provided eventId
+      const [results] = await db.query(query, [req.params.eventId]);
+      if (results.length === 0) {
+        res.status(404).json({ error: 'No category found for this event ID' });
+      } else {
+        res.json(results[0]);
+      }
+  } catch (error) {
+      next(error);
+  }
+});
+
+router.get('/weather-events-with-category', (req, res) => {
+  const query = `
+      SELECT WeatherEvent.*, Category.category_name
+      FROM WeatherEvent
+      JOIN Category ON WeatherEvent.category_id = Category.Category_id;
+  `;
+
+  db.query(query, (err, results) => {
+      if (err) {
+          res.status(500).send('Server error');
+          throw err;
+      }
+      res.json(results);
+  });
+});
+
 
 
 module.exports = router;

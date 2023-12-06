@@ -1,11 +1,22 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db'); // Ensure this is the promise-based pool
+const weatherEventModel = require('../models/weather-events.js');
 
 // ...
 
 //works
 // Retrieve a single weather event by ID
+router.get('/weatherStats', async (req, res) => {
+  const { category_name, attribute, order_direction } = req.query;
+  
+  try {
+    const results = await weatherEventModel.getWeatherStats(category_name, attribute, order_direction);
+    res.json(results);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 router.get('/:id', async (req, res) => {
   try {
     const query = 'SELECT * FROM WeatherEvent WHERE event_id = ?';
@@ -19,6 +30,8 @@ router.get('/:id', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+
 
 // // Update a weather event by ID
 // router.put('/:id', async (req, res) => {
