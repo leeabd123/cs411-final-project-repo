@@ -65,3 +65,57 @@ button {
   text-decoration: none;
   cursor: pointer;
 }
+
+.nav-link {
+  margin-top: 50px;
+  text-decoration: none;
+  color: #333;
+  margin-right: 20px;
+  font-weight: bold;
+  transition: color 0.3s;
+  font-size: 25px;
+}
+
+.nav-link:hover {
+  color: #007bff;
+}
+
+.nav-link.active {
+  color: #007bff;
+}
+
+.footer {
+  height: 300px; 
+  background-color: #333; /* Set the background color to your desired color */
+  color: #fff; /* Set the text color to white or your desired color */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.image-container {
+  background-color: white;
+  border: 2px solid #333;
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+}
+
+/* Styles for the storm image */
+.storm-image {
+  width: 100%;
+  max-height: 100%;
+  display: block;
+  margin: 0 auto;
+}
+.buttons {
+  display: flex;
+  flex-direction: column;
+  width: 100px;
+}
+.event-details {
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-top: 10px;
+}

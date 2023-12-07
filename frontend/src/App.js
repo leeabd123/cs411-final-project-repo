@@ -150,34 +150,37 @@ function App() {
 
               <Route path="/" element={
                   <div>
+                      <h1>Storm Events</h1> 
+                      <div className='image-container'>
+  <img className='storm-image' src="https://i.ibb.co/v3JZzpg/stormimage.jpg" alt="Storm" width="100%" height="300px"/>
+</div>
+
                       <div>
                           {/* Navigation Links (Optional) */}
-                          <Link to="/login">Login</Link>
-                          <Link to="/register">Register</Link>
-                          <Link to="/update-user">Update User</Link>
-                          <Link to="/funfacts">Funfacts</Link>
-                          <Link to="/favorites">Favorites</Link>
+                          <Link to="/login" className="nav-link">Login</Link>
+                          <Link to="/register" className="nav-link">Register</Link>
+                          <Link to="/update-user" className="nav-link">Update User</Link>
+                          <Link to="/funfacts" className="nav-link">Funfacts</Link>
+                          <Link to="/favorites" className="nav-link">Favorites</Link>
 
 
 
+                      </div>
+                      <div>
+                        
                       </div>
                       <form onSubmit={handleSubmit}>
                           <input type="text" value={month} onChange={handleMonthChange} placeholder="Enter month (e.g., 01 for January)" />
                           <button type="submit">Search</button>
                       </form>
                       <div>
-                          <button onClick={() => setSelectedType('Tornado')}>Tornado</button>
-                          <button onClick={() => setSelectedType('Blizzard')}>Blizzard</button>
-                          <button onClick={() => setSelectedType('Hail')}>Hail</button>
-                          <button onClick={() => setSelectedType('')}>Show All</button>
-                      </div>
-                      <div>
                           <button onClick={() => setSortOrder('Newest to Oldest')}>Newest to Oldest</button>
                           <button onClick={() => setSortOrder('Oldest to Newest')}>Oldest to Newest</button>
                       </div>
                       <div style={{ overflowY: 'scroll', height: '400px' }}>
                           {filteredData.map((event, index) => (
-                              <div key={index} onClick = {() => handleEventClick(event)}>{event.category_id}: {event.event_id}, began at {event.eventBeginTime}</div>
+                              <div className="event-details" key={index} onClick = {() => handleEventClick(event)}>{event.category_id}: {event.event_id}, began at {event.eventBeginTime}</div>
+
                           ))}
                       </div>
                       {/* Modal rendering */}
@@ -199,6 +202,7 @@ function App() {
                                 <div>
                                     <h2>Compared Event Details</h2>
                                     <div>Category: {comparedEvent?.category_id}</div>
+                                    
                                     {/* Render other details of comparedEvent */}
                                 </div>
                             )}
@@ -210,12 +214,18 @@ function App() {
                                 {filteredData.map((event, index) => (
                                     <div key={index} onClick={() => handleCompareEventClick(event)}>
                                         {event.category_id}: {event.event_id}
+                                        
                                     </div>
+                                    
                                 ))}
                             </div>
                         </div>
                     </Modal>
                         )}
+                          {/* Footer */}
+              <div className="footer">
+                &copy; 2023 Stormevents. All Rights Reserved.
+              </div>
                   </div>
               } />
           </Routes>
