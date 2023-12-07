@@ -23,6 +23,7 @@ function App() {
     const [comparedEvent, setComparedEvent] = useState(null);
     const [weatherEvents, setWeatherEvents] = useState([]);
     const [modalContent, setModalContent] = useState('');
+    const [the_user_id, set_the_user_id] = useState('');
 
     const handleMonthChange = (event) => {
       console.log("enterd");
@@ -140,7 +141,7 @@ function App() {
     return (
       <Router>
           <Routes>
-              <Route path="/login" element={<Login />} />
+              <Route path="/login" element={<Login/>} />
               <Route path="/register" element={<Register />} />
               <Route path="/update-user" element={<UpdateUser />} /> {/* New Route for updating user */}
               <Route path="/funfacts" element={<Funfacts />} /> {/* New Route for updating user */}

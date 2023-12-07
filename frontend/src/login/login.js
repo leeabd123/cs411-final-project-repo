@@ -13,7 +13,7 @@ const Login = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         setError(''); // Reset error message
-
+    
         try {
             const response = await fetch('http://localhost:3000/api/users/login', {
                 method: 'POST',
@@ -22,17 +22,25 @@ const Login = () => {
                 },
                 body: JSON.stringify({ user_name: username, password }),
             });
-
+    
             if (!response.ok) {
                 throw new Error(`Login failed: ${response.status}`);
             }
-
+    
+            // Assuming the response from the server contains the user ID in JSON format
+            const userData = await response.json();
+            const userId = userData.user.User_id; // Replace 'userId' with the actual key used in the response
+            console.log(userData);
+            // Save the user ID to localStorage
+            localStorage.setItem('userId', userId);
+    
             navigate('/'); 
         } catch (error) {
             console.error('Login error:', error);
             setError('Failed to login. Please check your credentials.'); // Set error message
         }
     };
+    
 
     return (
         <div className="login-container">
